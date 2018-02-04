@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Response } from '@angular/http';
 
-import { User, UserService } from '../../user.barrel';
+import { User } from '../../models/user';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-registration',
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.css']
 })
+
 export class RegistrationComponent implements OnInit {
-  public loading: boolean = true;
-  public user: User = new User();
+
+  public loading = true;
+  public user: User = new User;
   public form = new FormGroup(
     {
       name: new FormControl('', Validators.required),
@@ -21,6 +23,10 @@ export class RegistrationComponent implements OnInit {
     },
     RegistrationComponent.passwordMatchValidator
   );
+
+  public static passwordMatchValidator(g: FormGroup) {
+    return g.get('password').value === g.get('passwordConfirm').value ? null : { 'mismatch': true };
+  }
 
   public constructor(private _userService: UserService) {
     //
@@ -39,7 +45,7 @@ export class RegistrationComponent implements OnInit {
       (response: Response) => {
         console.log(response);
         window.alert('Successful registration!');
-        
+
         this.user = new User();
         this.form.reset();
         this.loading = false;
@@ -53,10 +59,6 @@ export class RegistrationComponent implements OnInit {
         //
       }
     );
-  }
-
-  public static passwordMatchValidator(g: FormGroup) {
-    return g.get('password').value === g.get('passwordConfirm').value ? null : {'mismatch': true};
   }
 
 }
